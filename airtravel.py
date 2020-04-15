@@ -74,6 +74,18 @@ class Flight:
                   for row in self._seating
                   if row is not None)
 
+    def make_boarding_card(self, console_card_printer):
+        for passanger, seats in sorted(self._passanger_seats()):
+            console_card_printer(passanger, seats, self._number, self.aircraft_model())
+
+    def _passanger_seats(self):
+        row_numbers, seat_letters = self._aircraft.seating_plan()
+        for row in row_numbers:
+            for letter in seat_letters:
+                passanger = self._seating[row][letter]
+                if passanger is not None:
+                    yield (passanger, f"{row}{letter}")
+
 
 class Aircraft:
     def __init__(self, registration, model, num_rows, num_seats_per_row):
@@ -91,6 +103,20 @@ class Aircraft:
     def seating_plan(self):
         return (range(1, self._num_rows + 1),
                 "ABCDEFGJK"[:self._num_seats_per_row])
+
+
+def console_card_printer(passanger, seat, flight_number, aircraft):
+    output = f"| Name: {passanger}"       \
+             f"  Flight: {flight_number}" \
+             f"  Seat: {seat}"            \
+             f"  Aircraft: {aircraft}"    \
+            "|"
+    banner = "+" + "-" * (len(output) - 2) + "+"
+    border = "|" + "-" * (len(output) - 2) + "|"
+    lines = [banner, border, output, banner, border]
+    card = "\n".join(lines)
+    print(card)
+    print()
 
 
 def make_flight():
