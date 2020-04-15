@@ -75,8 +75,8 @@ class Flight:
                   if row is not None)
 
     def make_boarding_card(self, console_card_printer):
-        for passanger, seats in sorted(self._passanger_seats()):
-            console_card_printer(passanger, seats, self._number, self.aircraft_model())
+        for passanger, seat in sorted(self._passanger_seats()):
+            console_card_printer(passanger, seat, self._number, self.aircraft_model())
 
     def _passanger_seats(self):
         row_numbers, seat_letters = self._aircraft.seating_plan()
@@ -87,22 +87,32 @@ class Flight:
                     yield (passanger, f"{row}{letter}")
 
 
-class Aircraft:
-    def __init__(self, registration, model, num_rows, num_seats_per_row):
-        self._registraton = registration
-        self._model = model
-        self._num_rows = num_rows
-        self._num_seats_per_row = num_seats_per_row
+class AirbusA319:
+    def __init__(self, registration):
+        self._registration = registration
 
     def registration(self):
-        return self._registraton
+        return self._registration
 
     def model(self):
-        return self._model
+        return "Airbus A319"
 
     def seating_plan(self):
-        return (range(1, self._num_rows + 1),
-                "ABCDEFGJK"[:self._num_seats_per_row])
+        return range(1, 23), "ABCDEF"
+
+
+class Boeing777:
+    def __init__(self, registration):
+        self._registration = registration
+
+    def registration(self):
+        return self._registration
+
+    def model(self):
+        return "Boeing 777"
+
+    def seating_plan(self):
+        return range(1, 56), "ABCDEGHJK"
 
 
 def console_card_printer(passanger, seat, flight_number, aircraft):
@@ -119,10 +129,15 @@ def console_card_printer(passanger, seat, flight_number, aircraft):
     print()
 
 
-def make_flight():
-    f = Flight("CO888", Aircraft("G-EUPT", "Propelerac", 
-                                 num_rows=22, num_seats_per_row=6))
+def make_flights():
+    f = Flight("CO888", AirbusA319("GGUSD"))
     f.allocate_seats("1A", "vedran")
     f.allocate_seats("1B", "Tanja")
     f.allocate_seats("15F", "Marko")
-    return f
+
+    g = Flight("SR98", Boeing777("HRK"))
+    g.allocate_seats("22A", "Zdravko")
+    g.allocate_seats("22B", "Pero")
+    g.allocate_seats("55G", "Severina")
+
+    return f, g
