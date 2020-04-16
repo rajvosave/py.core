@@ -1,7 +1,37 @@
 """Model for aircraftfllights."""
 
 
-class Flight:
+class Aircraft:
+    def __init__(self, registration):
+        self._registration = registration
+
+    def registration(self):
+        return self._registration
+
+    def num_seats(self):
+        rows, row_seats = self.seating_plan()
+        return len(rows) * len(row_seats)
+
+
+class AirbusA319(Aircraft):
+
+    def model(self):
+        return "Airbus A319"
+
+    def seating_plan(self):
+        return range(1, 23), "ABCDEF"
+
+
+class Boeing777(Aircraft):
+
+    def model(self):
+        return "Boeing 777"
+
+    def seating_plan(self):
+        return range(1, 56), "ABCDEGHJK"
+
+
+class Flight():
 
     def __init__(self, number, aircraft):
         if not number[:2].isalpha():
@@ -26,6 +56,9 @@ class Flight:
 
     def aircraft_model(self):
         return self._aircraft.model()
+
+    def num_seats(self):
+        return self._aircraft.num_seats()
 
     def allocate_seats(self, seat, passanger):
         """Allocate a seat to passanger
@@ -85,34 +118,6 @@ class Flight:
                 passanger = self._seating[row][letter]
                 if passanger is not None:
                     yield (passanger, f"{row}{letter}")
-
-
-class AirbusA319:
-    def __init__(self, registration):
-        self._registration = registration
-
-    def registration(self):
-        return self._registration
-
-    def model(self):
-        return "Airbus A319"
-
-    def seating_plan(self):
-        return range(1, 23), "ABCDEF"
-
-
-class Boeing777:
-    def __init__(self, registration):
-        self._registration = registration
-
-    def registration(self):
-        return self._registration
-
-    def model(self):
-        return "Boeing 777"
-
-    def seating_plan(self):
-        return range(1, 56), "ABCDEGHJK"
 
 
 def console_card_printer(passanger, seat, flight_number, aircraft):
